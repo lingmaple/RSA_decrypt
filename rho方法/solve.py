@@ -54,8 +54,9 @@ if __name__ == "__main__":
             N = int(nums[0:256].strip(), 16)
             e = int(nums[256:512].strip(), 16)
             c = int(nums[512:768].strip(), 16)
-
-            p = rho(N)
+            
+            print(N)
+            # p = rho(N)
             q = N // p
             print("p*q==N? {}".format(p * q == N))
             plaintext = decrypt(p, q, e, c, N)
