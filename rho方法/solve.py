@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
 
-
 def gcd(a, b):
     if b == 0:
         return a
@@ -30,7 +29,7 @@ def rho(n):
     a = 1  # 此时a按照样例选取为1
     while True:
         i += 1
-        x_nPlus1 = (x_nPlus1 * x_nPlus1 + a) % n  ## f(x_n)函数
+        x_nPlus1 = (x_nPlus1 * x_nPlus1 + a) % n  # f(x_n)函数
         d = gcd(abs(x_nPlus1 - x_n), n)
         if n > d > 1:
             return d

@@ -1,5 +1,4 @@
-from functools import reduce
-
+# -*- coding: utf-8 -*-
 
 def extended_gcd(a, b):
     if b == 0:
@@ -9,31 +8,41 @@ def extended_gcd(a, b):
     y = x1 - (a // b) * y1
     return gcd, x, y
 
+def chinese_remainder(p, s):
+    if len(p) != len(s):
+        raise ValueError("长度不匹配")
 
-def CRT(items):
-    N = reduce(lambda x, y: x * y, (i[1] for i in items))
-    result = 0
-    for a, n in items:
-        m = N // n
-        d, r, s = extended_gcd(n, m)
-        if d != 1:
-            raise Exception("Input not pairwise co-prime")
-        result += a * s * m
-    return result % N, N
+    n = len(p)
+    # 检查 b[i] 是否互质
+    for i in range(n - 1):
+        for j in range(i + 1, n):
+            if extended_gcd(s[i], s[j])[0] != 1:
+                raise ValueError("存在 b[i] 不互质")
 
+    # 计算方程组的通解
+    N = 1
+    for i in range(n):
+        N *= s[i]
 
-p = []
-s = []
+    x = 0
+    for i in range(n):
+        Ni = N // s[i]
+        gcd, xi, _ = extended_gcd(Ni, s[i])
+        if gcd != 1:
+            raise ValueError("存在 b[i] 不互质")
+
+        x += p[i] * xi * Ni
+
+    return x % N
+
+n = []
+c = []
 
 for i in [3, 8, 12, 16, 20]:
-    with open("Frame{}".format(i), "rb") as file:
+    with open("低指数攻击-中国剩余定理/Frame{}".format(i), "rb") as file:
         nums = file.read()
-        p.append(int(nums[0:256].strip(), 16))
+        n.append(int(nums[0:256].strip(), 16))
+        c.append(int(nums[512:768].strip(), 16))
 
-        s.append(int(nums[512:768].strip(), 16))
+print(chinese_remainder(c, n))
 
-
-data = list(zip(p, s))
-x, N = CRT(data)
-plaintext = gmpy2.iroot(gmpy2.mpz(x), e)[0].digits()
-print("明文为：%x" % int(plaintext))
