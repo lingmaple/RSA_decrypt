@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from math import isqrt
-
+from Crypto.Util.number import long_to_bytes
 
 def extended_gcd(a, b):
     if b == 0:
@@ -50,7 +50,7 @@ if __name__ == "__main__":
             c = int(nums[512:768].strip(), 16)
 
             p, q = fermat(N)
-            print("p*q==N? {}".format(p * q == N))
-
             plaintext = decrypt(p, q, e, c, N)
-            print("%x" % plaintext)
+            # print("plaintext:%x" % plaintext)
+            print("%s:" % hex(plaintext)[18:26])
+            print("%s" % long_to_bytes(plaintext)[-8:])

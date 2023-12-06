@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from Crypto.Util.number import long_to_bytes
+
+
 def gcd(a, b):
     if b == 0:
         return a
@@ -42,4 +45,6 @@ if __name__ == "__main__":
             break
         k += 1
     plaintext = decrypt(res, q, e, c, N)
-    print("%x" % plaintext)
+    # print("plaintext:%x" % plaintext)
+    print("%s:" % hex(plaintext)[18:26])
+    print("%s" % long_to_bytes(plaintext)[-8:])
