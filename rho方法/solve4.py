@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import random
+from Crypto.Util.number import long_to_bytes
 
 def gcd(a, b):
     if b == 0:
@@ -21,25 +21,6 @@ def mod_inverse(a, m):
     return x % m
 
 
-def rho(n):
-    x_nPlus1 = random.randint(1, n - 1)
-    x_n = x_nPlus1
-    temp = 2
-    i = 0
-    a = 1
-    while True:
-        i += 1
-        x_nPlus1 = (x_nPlus1 * x_nPlus1 + a) % n
-        d = gcd(abs(x_nPlus1 - x_n), n)
-        if n > d > 1:
-            return d
-        if x_nPlus1 == x_n:
-            a += 1
-        if i == temp:
-            x_n = x_nPlus1
-            temp <<= 1
-
-
 def decrypt(p, q, e, c, N):
     phi_n = (p - 1) * (q - 1)
     d = mod_inverse(e, phi_n)
@@ -48,16 +29,22 @@ def decrypt(p, q, e, c, N):
 
 
 if __name__ == "__main__":
-    for i in [6, 19]:
+    for i in [6,19]:
         with open("rho方法/Frame{}".format(i), "rb") as file:
             nums = file.read()
             N = int(nums[0:256].strip(), 16)
             e = int(nums[256:512].strip(), 16)
             c = int(nums[512:768].strip(), 16)
-            
-            print(N)
-            # p = rho(N)
-            q = N // p
-            print("p*q==N? {}".format(p * q == N))
-            plaintext = decrypt(p, q, e, c, N)
-            print("%x" % plaintext)
+
+        r, k = 2, 2
+        while True:
+            r = pow(r, k, N)
+            res = gcd(r - 1, N)
+            if res != 1 and res != N:
+                q = N // res
+                break
+            k += 1
+        plaintext = decrypt(res, q, e, c, N)
+        # print("plaintext:%x" % plaintext)
+        print("%s:" % hex(plaintext)[18:26])
+        print("%s" % long_to_bytes(plaintext)[-8:])
