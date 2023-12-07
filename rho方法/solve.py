@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import random
+
 
 def gcd(a, b):
     if b == 0:
@@ -21,23 +21,23 @@ def mod_inverse(a, m):
     return x % m
 
 
-def rho(n):
-    x_nPlus1 = random.randint(1, n - 1)
-    x_n = x_nPlus1
-    temp = 2
-    i = 0
-    a = 1
+def mapx(x, n):
+    x = (pow(x, n - 1, n) + 3) % n  # pow(x,n-1,n)是为了减小数值，加速运算，
+    return x
+
+
+def pollard_rho(x1, x2, n):
     while True:
-        i += 1
-        x_nPlus1 = (x_nPlus1 * x_nPlus1 + a) % n
-        d = gcd(abs(x_nPlus1 - x_n), n)
-        if n > d > 1:
-            return d
-        if x_nPlus1 == x_n:
-            a += 1
-        if i == temp:
-            x_n = x_nPlus1
-            temp <<= 1
+        x1 = mapx(x1, n)
+        x2 = mapx(mapx(x2, n),n)
+        p = gcd(x1 - x2, n)
+        if p == n:
+            print("fail")
+            return
+        elif p != 1:
+            print("p: " + str(p))
+            print("q: " + str(n / p))
+            break
 
 
 def decrypt(p, q, e, c, N):
@@ -54,9 +54,8 @@ if __name__ == "__main__":
             N = int(nums[0:256].strip(), 16)
             e = int(nums[256:512].strip(), 16)
             c = int(nums[512:768].strip(), 16)
-            
-            print(N)
-            # p = rho(N)
+
+            p = pollard_rho(1, 1, N)
             q = N // p
             print("p*q==N? {}".format(p * q == N))
             plaintext = decrypt(p, q, e, c, N)
