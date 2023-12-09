@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Crypto.Util.number import long_to_bytes
 
+
 def extended_gcd(a, b):
     if b == 0:
         return a, 1, 0
@@ -45,6 +46,6 @@ if __name__ == "__main__":
         c2 = int(nums[512:768].strip(), 16)
 
     plaintext = solve(N, c1, c2, e1, e2)
-    print("plaintext:%x" % plaintext)
+    # print("plaintext:%x" % plaintext)
     print("%s:" % hex(plaintext)[18:26])
     print("%s" % long_to_bytes(plaintext)[-8:])
