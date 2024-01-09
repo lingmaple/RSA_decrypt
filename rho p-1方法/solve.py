@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Crypto.Util.number import long_to_bytes
 
+
 def gcd(a, b):
     if b == 0:
         return a
@@ -28,13 +29,7 @@ def decrypt(p, q, e, c, N):
     return plaintext
 
 
-if __name__ == "__main__":
-    with open("rho p-1方法/Frame2", "rb") as file:
-        nums = file.read()
-        N = int(nums[0:256].strip(), 16)
-        e = int(nums[256:512].strip(), 16)
-        c = int(nums[512:768].strip(), 16)
-
+def solve(N):
     r, k = 2, 2
     while True:
         r = pow(r, k, N)
@@ -43,6 +38,17 @@ if __name__ == "__main__":
             q = N // res
             break
         k += 1
+    return res, q
+
+
+if __name__ == "__main__":
+    with open("rho p-1方法/Frame2", "rb") as file:
+        nums = file.read()
+        N = int(nums[0:256].strip(), 16)
+        e = int(nums[256:512].strip(), 16)
+        c = int(nums[512:768].strip(), 16)
+
+    res, q = solve(N)
     plaintext = decrypt(res, q, e, c, N)
     # print("plaintext:%x" % plaintext)
     print("%s:" % hex(plaintext)[18:26])

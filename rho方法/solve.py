@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import random
+from Crypto.Util.number import long_to_bytes
 
 
 def gcd(a, b):
@@ -21,23 +23,24 @@ def mod_inverse(a, m):
     return x % m
 
 
-def mapx(x, n):
-    x = (pow(x, n - 1, n) + 3) % n  # pow(x,n-1,n)是为了减小数值，加速运算，
-    return x
+def pollard_rho(n):
+    x = random.randint(1, n - 1)
+    y = x
+    c = random.randint(1, n - 1)
+    d = 1
 
+    while d == 1:
+        x = (x * x + c) % n
+        y = (y * y + c) % n
+        y = (y * y + c) % n
+        d = gcd(abs(x - y), n)
 
-def pollard_rho(x1, x2, n):
-    while True:
-        x1 = mapx(x1, n)
-        x2 = mapx(mapx(x2, n),n)
-        p = gcd(x1 - x2, n)
-        if p == n:
-            print("fail")
-            return
-        elif p != 1:
-            print("p: " + str(p))
-            print("q: " + str(n / p))
-            break
+    if d == n:
+        RuntimeError("None")
+        return None
+    else:
+        # print(d)
+        return d
 
 
 def decrypt(p, q, e, c, N):
@@ -55,8 +58,9 @@ if __name__ == "__main__":
             e = int(nums[256:512].strip(), 16)
             c = int(nums[512:768].strip(), 16)
 
-            p = pollard_rho(1, 1, N)
+            p = pollard_rho(N)
             q = N // p
-            print("p*q==N? {}".format(p * q == N))
+            # print("p*q==N? {}".format(p * q == N))
             plaintext = decrypt(p, q, e, c, N)
-            print("%x" % plaintext)
+            print("%s:" % hex(plaintext)[18:26])
+            print("%s" % long_to_bytes(plaintext)[-8:])

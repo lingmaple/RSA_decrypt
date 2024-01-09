@@ -2,6 +2,7 @@
 from gmpy2 import iroot
 from Crypto.Util.number import long_to_bytes
 
+
 def extended_gcd(a, b):
     if b == 0:
         return a, 1, 0
